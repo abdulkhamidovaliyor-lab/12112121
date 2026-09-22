@@ -1,0 +1,967 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>InfinBANK</title>
+
+<style>
+*{box-sizing:border-box}
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    font-family:Arial,sans-serif;
+    background:#f5f5f7;
+    color:#181818;
+}
+body{overflow:hidden}
+button{font-family:inherit}
+
+.page{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:#f5f5f7;
+}
+.page.active{display:block}
+
+.scroll{
+    height:100%;
+    overflow-y:auto;
+    padding:18px 16px 105px;
+}
+
+h1{
+    margin:8px 0 20px;
+    font-size:28px;
+}
+h2{
+    margin:20px 0 12px;
+    font-size:20px;
+}
+
+.card{
+    background:#fff;
+    border-radius:20px;
+    padding:18px;
+    margin-bottom:14px;
+    box-shadow:0 2px 10px rgba(0,0,0,.04);
+}
+
+/* PIN */
+
+#pin{
+    background:linear-gradient(180deg,#f2ecff,#fff);
+}
+
+.pin-wrap{
+    min-height:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:25px;
+}
+
+.logo{
+    font-size:31px;
+    font-weight:800;
+    color:#5326a8;
+    margin-bottom:35px;
+}
+
+.welcome{
+    font-size:25px;
+    font-weight:700;
+    text-align:center;
+}
+
+.subtitle{
+    color:#777;
+    margin-top:9px;
+    margin-bottom:25px;
+}
+
+.pin-dots{
+    display:flex;
+    gap:18px;
+    margin:10px 0 30px;
+}
+
+.pin-dot{
+    width:16px;
+    height:16px;
+    border:2px solid #402083;
+    border-radius:50%;
+}
+
+.pin-dot.fill{
+    background:#402083;
+}
+
+.keypad{
+    width:285px;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:13px;
+}
+
+.key{
+    height:68px;
+    border:0;
+    border-radius:50%;
+    background:#fff;
+    font-size:25px;
+    box-shadow:0 2px 9px rgba(0,0,0,.08);
+}
+
+.key:active{
+    transform:scale(.96);
+    background:#eee9fa;
+}
+
+/* MAIN */
+
+.balance{
+    background:linear-gradient(135deg,#5422a7,#7b46d1);
+    color:white;
+    border-radius:23px;
+    padding:22px;
+    margin-bottom:17px;
+}
+
+.balance-small{
+    opacity:.8;
+    font-size:14px;
+}
+
+.balance-number{
+    font-size:29px;
+    font-weight:700;
+    margin-top:8px;
+}
+
+.actions{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+}
+
+.action{
+    background:#fff;
+    border-radius:18px;
+    text-align:center;
+    padding:18px 5px;
+    font-size:13px;
+}
+
+.action-icon{
+    font-size:25px;
+    margin-bottom:8px;
+}
+
+/* TRANSFERS */
+
+.big-button{
+    width:100%;
+    border:0;
+    background:#6030b7;
+    color:#fff;
+    border-radius:17px;
+    padding:17px;
+    font-size:16px;
+    font-weight:700;
+}
+
+.row{
+    display:flex;
+    align-items:center;
+    gap:13px;
+}
+
+.circle-icon{
+    width:48px;
+    height:48px;
+    flex:0 0 48px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#eee7fb;
+    color:#5424a5;
+    font-weight:700;
+}
+
+.row-main{
+    flex:1;
+}
+
+.row-title{
+    font-weight:700;
+    font-size:15px;
+}
+
+.row-sub{
+    color:#8a8a8a;
+    font-size:13px;
+    margin-top:5px;
+}
+
+/* PAYMENTS */
+
+.grid2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+}
+
+.service{
+    min-height:105px;
+    background:#fff;
+    border-radius:18px;
+    padding:15px;
+}
+
+.service-icon{
+    font-size:25px;
+    margin-bottom:13px;
+}
+
+/* HISTORY */
+
+.date-title{
+    color:#777;
+    font-size:14px;
+    margin:20px 4px 9px;
+}
+
+.history-item{
+    background:#fff;
+    border-radius:18px;
+    padding:15px;
+    margin-bottom:10px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    cursor:pointer;
+}
+
+.history-icon{
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    background:#efe9fa;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#5725a7;
+}
+
+.history-center{
+    flex:1;
+}
+
+.history-name{
+    font-size:15px;
+    font-weight:700;
+}
+
+.history-info{
+    color:#999;
+    font-size:12px;
+    margin-top:5px;
+}
+
+.history-right{
+    text-align:right;
+}
+
+.amount{
+    font-weight:700;
+    white-space:nowrap;
+}
+
+.time{
+    color:#999;
+    font-size:12px;
+    margin-top:5px;
+}
+
+/* NAV */
+
+.nav{
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:0;
+    height:76px;
+    background:#fff;
+    border-top:1px solid #eee;
+    display:flex;
+    z-index:50;
+    padding-bottom:env(safe-area-inset-bottom);
+}
+
+.nav-btn{
+    flex:1;
+    border:0;
+    background:none;
+    color:#999;
+    font-size:11px;
+    padding-top:8px;
+}
+
+.nav-btn span{
+    display:block;
+    font-size:22px;
+    margin-bottom:4px;
+}
+
+.nav-btn.active{
+    color:#5928aa;
+    font-weight:700;
+}
+
+/* DETAILS */
+
+.topbar{
+    height:62px;
+    display:flex;
+    align-items:center;
+    padding:0 16px;
+    background:#fff;
+    position:sticky;
+    top:0;
+    z-index:5;
+}
+
+.back{
+    border:0;
+    background:none;
+    font-size:27px;
+    width:45px;
+    text-align:left;
+}
+
+.top-title{
+    font-size:18px;
+    font-weight:700;
+    flex:1;
+    text-align:center;
+    padding-right:45px;
+}
+
+.success{
+    text-align:center;
+    padding:24px 10px 14px;
+}
+
+.success-circle{
+    width:68px;
+    height:68px;
+    margin:auto;
+    background:#e9f8ef;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:32px;
+    color:#21a45d;
+}
+
+.success-title{
+    font-size:21px;
+    font-weight:700;
+    margin-top:14px;
+}
+
+.detail-line{
+    display:flex;
+    justify-content:space-between;
+    gap:15px;
+    padding:13px 0;
+    border-bottom:1px solid #eee;
+    font-size:14px;
+}
+
+.detail-line:last-child{
+    border-bottom:0;
+}
+
+.detail-label{
+    color:#888;
+}
+
+.detail-value{
+    text-align:right;
+    font-weight:600;
+}
+
+.receipt-btn{
+    width:100%;
+    border:0;
+    border-radius:17px;
+    background:#5a29aa;
+    color:#fff;
+    padding:16px;
+    font-size:16px;
+    font-weight:700;
+    margin-top:10px;
+}
+
+/* RECEIPT */
+
+.receipt{
+    background:#fff;
+    margin:15px;
+    border-radius:22px;
+    padding:22px 18px;
+}
+
+.receipt-logo{
+    text-align:center;
+    color:#5423a5;
+    font-size:25px;
+    font-weight:800;
+    margin:10px 0 25px;
+}
+
+.receipt-amount{
+    text-align:center;
+    font-size:30px;
+    font-weight:800;
+    margin-bottom:25px;
+}
+
+.receipt-status{
+    text-align:center;
+    color:#21a45d;
+    font-weight:700;
+    margin-bottom:20px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- PIN -->
+
+<section id="pin" class="page active">
+<div class="pin-wrap">
+
+    <div class="logo">InfinBANK</div>
+
+    <div class="welcome">Добро пожаловать, Maqsudbek!</div>
+    <div class="subtitle">Введите PIN-код</div>
+
+    <div class="pin-dots">
+        <div class="pin-dot"></div>
+        <div class="pin-dot"></div>
+        <div class="pin-dot"></div>
+        <div class="pin-dot"></div>
+    </div>
+
+    <div class="keypad">
+        <button class="key" onclick="digit('1')">1</button>
+        <button class="key" onclick="digit('2')">2</button>
+        <button class="key" onclick="digit('3')">3</button>
+
+        <button class="key" onclick="digit('4')">4</button>
+        <button class="key" onclick="digit('5')">5</button>
+        <button class="key" onclick="digit('6')">6</button>
+
+        <button class="key" onclick="digit('7')">7</button>
+        <button class="key" onclick="digit('8')">8</button>
+        <button class="key" onclick="digit('9')">9</button>
+
+        <button class="key"></button>
+        <button class="key" onclick="digit('0')">0</button>
+        <button class="key" onclick="delDigit()">⌫</button>
+    </div>
+
+</div>
+</section>
+
+<!-- HOME -->
+
+<section id="home" class="page">
+<div class="scroll">
+
+    <h1>Главная</h1>
+
+    <div class="balance">
+        <div class="balance-small">Общий баланс</div>
+        <div class="balance-number">•••••••• UZS</div>
+    </div>
+
+    <div class="actions">
+        <div class="action">
+            <div class="action-icon">↗</div>
+            Перевести
+        </div>
+
+        <div class="action">
+            <div class="action-icon">＋</div>
+            Пополнить
+        </div>
+
+        <div class="action">
+            <div class="action-icon">▣</div>
+            Оплатить
+        </div>
+    </div>
+
+    <h2>Мои карты</h2>
+
+    <div class="card">
+        <div class="row">
+            <div class="circle-icon">V</div>
+            <div class="row-main">
+                <div class="row-title">Основная карта</div>
+                <div class="row-sub">•••• 8089</div>
+            </div>
+            <b>UZS</b>
+        </div>
+    </div>
+
+    <h2>Последние операции</h2>
+
+    <div class="card">
+        <div class="row">
+            <div class="circle-icon">↗</div>
+            <div class="row-main">
+                <div class="row-title">Перевод</div>
+                <div class="row-sub">17.09.2026</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div id="nav-home"></div>
+</section>
+
+<!-- TRANSFERS -->
+
+<section id="transfer" class="page">
+<div class="scroll">
+
+    <h1>Переводы</h1>
+
+    <button class="big-button">Перевести по номеру карты</button>
+
+    <h2>Переводы</h2>
+
+    <div class="card">
+        <div class="row">
+            <div class="circle-icon">💳</div>
+            <div class="row-main">
+                <div class="row-title">На карту</div>
+                <div class="row-sub">Перевод по номеру карты</div>
+            </div>
+            ›
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="row">
+            <div class="circle-icon">☎</div>
+            <div class="row-main">
+                <div class="row-title">По номеру телефона</div>
+                <div class="row-sub">Быстрый перевод</div>
+            </div>
+            ›
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="row">
+            <div class="circle-icon">★</div>
+            <div class="row-main">
+                <div class="row-title">Между своими картами</div>
+                <div class="row-sub">Без комиссии</div>
+            </div>
+            ›
+        </div>
+    </div>
+
+</div>
+<div id="nav-transfer"></div>
+</section>
+
+<!-- PAYMENTS -->
+
+<section id="payments" class="page">
+<div class="scroll">
+
+    <h1>Платежи</h1>
+
+    <div class="grid2">
+        <div class="service">
+            <div class="service-icon">⌂</div>
+            <b>Мой дом</b>
+        </div>
+
+        <div class="service">
+            <div class="service-icon">▣</div>
+            <b>Оплата услуг</b>
+        </div>
+    </div>
+
+    <h2>Категории</h2>
+
+    <div class="grid2">
+        <div class="service">
+            <div class="service-icon">☎</div>
+            Мобильная связь и ГТС
+        </div>
+
+        <div class="service">
+            <div class="service-icon">◎</div>
+            Интернет провайдеры
+        </div>
+
+        <div class="service">
+            <div class="service-icon">⌂</div>
+            Коммунальные услуги
+        </div>
+
+        <div class="service">
+            <div class="service-icon">▤</div>
+            Гос. услуги и Штрафы УБДД
+        </div>
+
+        <div class="service">
+            <div class="service-icon">▣</div>
+            Цифровое TV
+        </div>
+    </div>
+
+    <h2>Последние платежи</h2>
+
+    <div class="card">
+        <div class="row">
+            <div class="circle-icon">U</div>
+            <div class="row-main">
+                <div class="row-title">Ucell</div>
+                <div class="row-sub">17.09.2026</div>
+            </div>
+            <b>50 000.00</b>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="row">
+            <div class="circle-icon">U</div>
+            <div class="row-main">
+                <div class="row-title">Uztelecom</div>
+                <div class="row-sub">16.09.2026</div>
+            </div>
+            <b>120 000.00</b>
+        </div>
+    </div>
+
+</div>
+<div id="nav-payments"></div>
+</section>
+
+<!-- HISTORY -->
+
+<section id="history" class="page">
+<div class="scroll">
+
+    <h1>История</h1>
+
+    <div id="history-list"></div>
+
+</div>
+<div id="nav-history"></div>
+</section>
+
+<!-- DETAILS -->
+
+<section id="details" class="page">
+
+<div class="topbar">
+    <button class="back" onclick="page('history')">‹</button>
+    <div class="top-title">Детали операции</div>
+</div>
+
+<div class="scroll" style="padding-top:0">
+
+    <div class="success">
+        <div class="success-circle">✓</div>
+        <div class="success-title">Операция выполнена</div>
+    </div>
+
+    <div class="card">
+        <div class="detail-line">
+            <span class="detail-label">Сумма</span>
+            <span id="dAmount" class="detail-value"></span>
+        </div>
+
+        <div class="detail-line">
+            <span class="detail-label">Дата и время</span>
+            <span id="dDate" class="detail-value"></span>
+        </div>
+
+        <div class="detail-line">
+            <span class="detail-label">Получатель</span>
+            <span id="dName" class="detail-value"></span>
+        </div>
+
+        <div class="detail-line">
+            <span class="detail-label">Карта</span>
+            <span id="dCard" class="detail-value"></span>
+        </div>
+
+        <div class="detail-line">
+            <span class="detail-label">Статус</span>
+            <span class="detail-value">Успешно</span>
+        </div>
+    </div>
+
+    <button class="receipt-btn" onclick="openReceipt()">Квитанция</button>
+
+</div>
+</section>
+
+<!-- RECEIPT -->
+
+<section id="receiptPage" class="page">
+
+<div class="topbar">
+    <button class="back" onclick="page('details')">‹</button>
+    <div class="top-title">Квитанция</div>
+</div>
+
+<div class="scroll" style="padding-top:0">
+
+    <div class="receipt">
+
+        <div class="receipt-logo">InfinBANK</div>
+
+        <div id="rAmount" class="receipt-amount"></div>
+
+        <div class="receipt-status">Успешно</div>
+
+        <div class="detail-line">
+            <span class="detail-label">Дата и время</span>
+            <span id="rDate" class="detail-value"></span>
+        </div>
+
+        <div class="detail-line">
+            <span class="detail-label">Получатель</span>
+            <span id="rName" class="detail-value"></span>
+        </div>
+
+        <div class="detail-line">
+            <span class="detail-label">Карта получателя</span>
+            <span id="rCard" class="detail-value"></span>
+        </div>
+
+        <div class="detail-line">
+            <span class="detail-label">Тип операции</span>
+            <span class="detail-value">Перевод</span>
+        </div>
+
+    </div>
+
+    <button class="receipt-btn" onclick="page('home')">На главную</button>
+
+</div>
+</section>
+
+<script>
+
+let pinValue = '';
+let currentOperation = null;
+
+const operations = [
+    {
+        date:'17.09.2026',
+        time:'14:57',
+        amount:'1 200 421.94 UZS',
+        name:'DIYORBEK B.',
+        card:'•••• 1926'
+    },
+    {
+        date:'15.09.2026',
+        time:'09:56',
+        amount:'1 503 750.00 UZS',
+        name:'SLAYEV Y.',
+        card:'•••• 9650'
+    },
+    {
+        date:'12.09.2026',
+        time:'08:53',
+        amount:'1 440 000.00 UZS',
+        name:'MENGLIYEV M.',
+        card:'•••• 6152'
+    },
+    {
+        date:'11.09.2026',
+        time:'20:41',
+        amount:'3 000 000.00 UZS',
+        name:'IXTIYOR B.',
+        card:'•••• 8089'
+    }
+];
+
+function digit(n){
+
+    if(pinValue.length >= 4) return;
+
+    pinValue += n;
+    updateDots();
+
+    if(pinValue.length === 4){
+
+        if(pinValue === '0000'){
+            setTimeout(()=>{
+                pinValue='';
+                updateDots();
+                page('home');
+            },150);
+        }else{
+            setTimeout(()=>{
+                pinValue='';
+                updateDots();
+            },350);
+        }
+    }
+}
+
+function delDigit(){
+    pinValue = pinValue.slice(0,-1);
+    updateDots();
+}
+
+function updateDots(){
+
+    const dots=document.querySelectorAll('.pin-dot');
+
+    dots.forEach((dot,i)=>{
+        dot.classList.toggle('fill',i<pinValue.length);
+    });
+}
+
+function page(id){
+
+    document.querySelectorAll('.page').forEach(p=>{
+        p.classList.remove('active');
+    });
+
+    document.getElementById(id).classList.add('active');
+}
+
+function nav(active){
+
+    return `
+    <div class="nav">
+
+        <button class="nav-btn ${active==='home'?'active':''}"
+        onclick="page('home')">
+        <span>⌂</span>
+        Главная
+        </button>
+
+        <button class="nav-btn ${active==='transfer'?'active':''}"
+        onclick="page('transfer')">
+        <span>↔</span>
+        Переводы
+        </button>
+
+        <button class="nav-btn ${active==='payments'?'active':''}"
+        onclick="page('payments')">
+        <span>▣</span>
+        Платежи
+        </button>
+
+        <button class="nav-btn ${active==='history'?'active':''}"
+        onclick="page('history')">
+        <span>◷</span>
+        История
+        </button>
+
+    </div>`;
+}
+
+document.getElementById('nav-home').innerHTML=nav('home');
+document.getElementById('nav-transfer').innerHTML=nav('transfer');
+document.getElementById('nav-payments').innerHTML=nav('payments');
+document.getElementById('nav-history').innerHTML=nav('history');
+
+function renderHistory(){
+
+    const box=document.getElementById('history-list');
+
+    let html='';
+    let lastDate='';
+
+    operations.forEach((o,i)=>{
+
+        if(o.date!==lastDate){
+            html+=`<div class="date-title">${o.date}</div>`;
+            lastDate=o.date;
+        }
+
+        html+=`
+        <div class="history-item" onclick="openOperation(${i})">
+
+            <div class="history-icon">↗</div>
+
+            <div class="history-center">
+                <div class="history-name">${o.name}</div>
+                <div class="history-info">
+                    Перевод · ${o.card}
+                </div>
+            </div>
+
+            <div class="history-right">
+                <div class="amount">${o.amount}</div>
+                <div class="time">${o.time}</div>
+            </div>
+
+        </div>`;
+    });
+
+    box.innerHTML=html;
+}
+
+function openOperation(i){
+
+    currentOperation=operations[i];
+
+    document.getElementById('dAmount').textContent=currentOperation.amount;
+    document.getElementById('dDate').textContent=
+        currentOperation.date+' '+currentOperation.time;
+
+    document.getElementById('dName').textContent=currentOperation.name;
+    document.getElementById('dCard').textContent=currentOperation.card;
+
+    page('details');
+}
+
+function openReceipt(){
+
+    if(!currentOperation) return;
+
+    document.getElementById('rAmount').textContent=currentOperation.amount;
+
+    document.getElementById('rDate').textContent=
+        currentOperation.date+' '+currentOperation.time;
+
+    document.getElementById('rName').textContent=currentOperation.name;
+    document.getElementById('rCard').textContent=currentOperation.card;
+
+    page('receiptPage');
+}
+
+renderHistory();
+page('pin');
+
+</script>
+
+</body>
+</html>
